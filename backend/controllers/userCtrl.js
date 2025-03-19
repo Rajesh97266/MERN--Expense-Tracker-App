@@ -9,25 +9,25 @@ const userController = {
   register: asyncHandler(async (req, res) => {
     const { username, email, password } = req.body;
 
-    //!Validate
+    //*Validate
     if (!username.trim() || !email.trim() || !password.trim()) {
       throw new Error("Please all fields are required");
     }
-    //!Check if user already exists
+    //*Check if user already exists
     const userExists = await User.findOne({ email });
     if (userExists) {
       throw new Error("User already exists");
     }
-    //!Hash the user password
+    //*Hash the user password
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
-    //! Create the user and save into db
+    //*Create the user and save into db
     const userCreated = await User.create({
       email,
       username,
       password: hashedPassword,
     });
-    //! Send the response
+    //*Send the response
     res.status(201).json({
       message: "User created successfully",
       username: userCreated.username,
@@ -67,13 +67,48 @@ const userController = {
   }),
   // !Profile
   profile: asyncHandler(async (req, res) => {
-    //! Find the user 
+    //*Find the user
     const user = await User.findById(req.user);
     if (!user) {
       throw new Error("User not found");
     }
-    //!Send the response
+    //*Send the response
     res.json({ username: user.username, email: user.email });
+  }),
+  //!Change password
+  changePassword: asyncHandler(async (req, res) => {
+    const { newPassword } = req.body;
+    //*Get the user
+    const user = await User.findById(req.user);
+    if (!user) {
+      throw new Error("User not found");
+    }
+    //*Hash the new password before saving
+    //*Hash the user password
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(newPassword, salt);
+    //*Save the new password
+    user.password = hashedPassword;
+    await user.save({
+      validateBeforeSave: false,
+    });
+    //!Send the response
+    res.json({ message: "Password changed successfully" });
+  }),
+  //! update user profile
+  updateUserProfile: asyncHandler(async (req, res) => {
+    const { email, username } = req.body;
+    const updatedUser = await User.findByIdAndUpdate(
+      req.user,
+      {
+        username,
+        email,
+      },
+      {
+        new: true,
+      }
+    );
+    res.json({ message: "User profile updated successfully", updatedUser });
   }),
 };
 
