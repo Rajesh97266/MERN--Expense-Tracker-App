@@ -4,6 +4,7 @@ const userRouter = require("./routes/userRouter");
 const mongoose = require("mongoose");
 const app = express();
 const dotenv = require("dotenv");
+const errorHandler = require("./middlewares/errorHandlerMiddleware");
 
 // Load environment variables
 dotenv.config();
@@ -22,8 +23,12 @@ mongoose
 app.use(cors());
 app.use(express.json());
 
+
 // !Routes
 app.use("/", userRouter);
+
+//!Error Handler Middleware
+app.use(errorHandler);
 
 //!Start Server
 const port = process.env.PORT || 8000;
