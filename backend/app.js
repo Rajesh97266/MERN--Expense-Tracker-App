@@ -6,6 +6,7 @@ const app = express();
 const dotenv = require("dotenv");
 const errorHandler = require("./middlewares/errorHandlerMiddleware");
 const categoryRouter = require("./routes/categoryRouter");
+const transactionRouter = require("./routes/transactionRouter");
 
 // Load environment variables
 dotenv.config();
@@ -23,6 +24,7 @@ mongoose
 // !Middlewares
 app.use(cors());
 app.use(express.json());
+app.use("/", transactionRouter);
 
 
 // !Routes
