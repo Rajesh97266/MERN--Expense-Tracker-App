@@ -38,25 +38,25 @@ const userController = {
   // !Login user
   login: asyncHandler(async (req, res) => {
     const { email, password } = req.body;
-    //! Validate input fields (no empty values)
+    //* Validate input fields (no empty values)
     if (!email?.trim() || !password?.trim()) {
       throw new Error("All fields are required");
     }
-    //! Check if user exists in the database
+    //!*Check if user exists in the database
     const user = await User.findOne({ email });
     if (!user) {
       throw new Error("Invalid login credentials");
     }
-    //! Compare the password
+    //* Compare the password
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
       throw new Error("Invalid login credentials");
     }
-    // ! Create the token
+    // * Create the token
     const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
       expiresIn: "1d",
     });
-    //! Send the response
+    //* Send the response
     res.status(200).json({
       message: "User logged in successfully!!!",
       username: user.username,

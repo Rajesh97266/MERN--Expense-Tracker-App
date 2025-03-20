@@ -5,6 +5,7 @@ const mongoose = require("mongoose");
 const app = express();
 const dotenv = require("dotenv");
 const errorHandler = require("./middlewares/errorHandlerMiddleware");
+const categoryRouter = require("./routes/categoryRouter");
 
 // Load environment variables
 dotenv.config();
@@ -26,6 +27,7 @@ app.use(express.json());
 
 // !Routes
 app.use("/", userRouter);
+app.use("/" , categoryRouter)
 
 //!Error Handler Middleware
 app.use(errorHandler);
