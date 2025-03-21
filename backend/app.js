@@ -21,8 +21,13 @@ mongoose
     console.log(err);
   });
 
+  // !Cors Config
+  const corsOptions = {
+    origin: ["http://localhost:5173"],
+  };
+
 // !Middlewares
-app.use(cors());
+app.use(cors(corsOptions));
 app.use(express.json());
 app.use("/", transactionRouter);
 
