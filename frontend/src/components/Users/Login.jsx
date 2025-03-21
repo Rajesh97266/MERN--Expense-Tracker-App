@@ -7,6 +7,8 @@ import { loginAPI } from "../../services/users/userService";
 import AlertMessage from "../Alert/AlertMessage";
 import { loginAction } from "../../redux/slice/authSlice";
 import { useDispatch } from "react-redux";
+import { useNavigate } from "react-router-dom";
+
 
 
 //! Validation Schema
@@ -17,13 +19,13 @@ const validationSchema = Yup.object({
     .required("Password is required"),
 });
 const LoginForm = () => {
-   const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
   // *Mutation
   const { mutateAsync, isPending, isError, error, isSuccess } = useMutation({
     mutationFn: loginAPI,
     mutationKey: ["login"],
   });
- 
 
   const formik = useFormik({
     initialValues: {
@@ -36,8 +38,8 @@ const LoginForm = () => {
       mutateAsync(values)
         .then((data) => {
           //dispatch
-          dispatch(loginAction(data))
-          //save the user 
+          dispatch(loginAction(data));
+          //save the user
           localStorage.setItem("userInfo", JSON.stringify(data));
         })
         .catch((err) => {
@@ -45,8 +47,14 @@ const LoginForm = () => {
         });
     },
   });
-  
-  console.log(formik);
+  //Redirect
+  useEffect(() => {
+    setTimeout(() => {
+      if (isSuccess) {
+        navigate("/profile");
+      }
+    }, 1000);
+  }, [isPending, isError, error, isSuccess]);
 
   return (
     <form
